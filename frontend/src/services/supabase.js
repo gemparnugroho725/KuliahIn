@@ -1,10 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://xxxxxxxxxxxxxxxxxxxx.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'public-anon-key';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder';
 
-if (!import.meta.env.VITE_SUPABASE_URL) {
-    console.error('❌ Supabase env vars missing. Cek VITE_SUPABASE_URL dan VITE_SUPABASE_ANON_KEY di .env');
+// Supabase-js throws if URL is not a valid URL starting with http
+const isValidUrl = (url) => {
+    try {
+        return url && url.startsWith('http');
+    } catch (e) {
+        return false;
+    }
+};
+
+if (!isValidUrl(supabaseUrl)) {
+    console.error('❌ Supabase URL is missing or invalid. Please set VITE_SUPABASE_URL in Netlify environment variables.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(
+    isValidUrl(supabaseUrl) ? supabaseUrl : 'https://placeholder.supabase.co',
+    supabaseAnonKey
+);
