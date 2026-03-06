@@ -1,0 +1,35 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # Berjalan otomatis setiap 3 hari sekali pada jam 00:00 UTC
+    - cron: '0 0 */3 * *'
+  workflow_dispatch: # Mengizinkan untuk dijalankan manual dari dashboard GitHub
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit Supabase API to keep it awake
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "Secrets SUPABASE_URL atau SUPABASE_ANON_KEY belum diatur di GitHub Settings."
+            exit 0
+          fi
+          
+          echo "Pinging Supabase REST API..."
+          # Mengambil 1 baris data dari tabel jadwal untuk mencatat "aktivitas"
+          STATUSCODE=$(curl -s -o /dev/null -w "%{http_code}" -X GET "${SUPABASE_URL}/rest/v1/jadwal?limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+            
+          echo "Response code: $STATUSCODE"
+          
+          if [ "$STATUSCODE" -eq 200 ] || [ "$STATUSCODE" -eq 204 ]; then
+            echo "Ping berhasil! Database aman dari sleep mode."
+          else
+            echo "Ping gagal atau endpoint tidak valid."
+          fi
