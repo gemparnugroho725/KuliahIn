@@ -22,20 +22,13 @@ const Login = () => {
         } catch (error) {
             console.error('Login error:', error);
             if (error.message.includes('Email not confirmed')) {
-                toast.error('Email belum diverifikasi. Cek inbox kamu!');
+                toast.error('Email belum diverifikasi. Masukkan kode OTP kamu.');
+                navigate(`/verify-email?email=${encodeURIComponent(email)}`);
             } else {
                 toast.error('Login gagal. Cek email dan password kamu.');
             }
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleGoogleLogin = async () => {
-        try {
-            await loginWithGoogle();
-        } catch (error) {
-            toast.error('Gagal login dengan Google.');
         }
     };
 
@@ -92,15 +85,6 @@ const Login = () => {
                         {loading ? 'Sedang Masuk...' : 'Masuk Sekarang'}
                     </button>
                 </form>
-
-                <div className="auth-divider">
-                    <span>Atau masuk dengan</span>
-                </div>
-
-                <button className="btn btn-secondary btn-full" onClick={handleGoogleLogin}>
-                    <img src="https://www.google.com/favicon.ico" alt="G" style={{ width: 16, height: 16 }} />
-                    Google
-                </button>
 
                 <div className="auth-footer">
                     <p>Belum punya akun? <Link to="/register">Daftar sekarang</Link></p>

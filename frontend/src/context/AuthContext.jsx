@@ -78,15 +78,15 @@ export const AuthProvider = ({ children }) => {
         return data;
     };
 
-    // Login dengan Google
-    const loginWithGoogle = async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: `${window.location.origin}/dashboard`,
-            },
+    // Verify OTP (One-Time Password)
+    const verifyOTP = async (email, token) => {
+        const { data, error } = await supabase.auth.verifyOtp({
+            email,
+            token,
+            type: 'signup',
         });
         if (error) throw error;
+        return data;
     };
 
     // Logout
@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }) => {
     const updateUser = (updates) => setUser((prev) => ({ ...prev, ...updates }));
 
     return (
-        <AuthContext.Provider value={{ user, loading, register, login, loginWithGoogle, logout, updateUser }}>
+        <AuthContext.Provider value={{ user, loading, register, login, verifyOTP, logout, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

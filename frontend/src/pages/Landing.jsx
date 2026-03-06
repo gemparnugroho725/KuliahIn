@@ -40,19 +40,19 @@ const features = [
         color: 'var(--color-danger)',
     },
     {
-        icon: '☁️',
-        title: 'Login dengan Google',
-        desc: 'Satu akun Google cukup untuk semua. Data tersimpan di cloud dan bisa diakses kapan saja, di mana saja.',
+        icon: '🛡️',
+        title: 'Akun Aman & Terverifikasi',
+        desc: 'Sistem login dengan email dan password terenkripsi. Dilengkapi verifikasi OTP untuk memastikan akunmu tetap aman.',
         bg: '#E0F2FE',
         color: '#0284C7',
     },
 ];
 
 const Landing = () => {
-    const { loginWithGoogle } = useAuth();
+    const navigate = useNavigate();
     const isMissingEnv = !import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('placeholder');
 
-    const handleGoogleLogin = () => {
+    const handleLoginClick = () => {
         navigate('/login');
     };
 
@@ -80,8 +80,8 @@ const Landing = () => {
                     <span>Kuliah<span style={{ color: 'var(--color-primary)' }}>in</span></span>
                 </div>
                 <div style={{ display: 'flex', gap: 12 }}>
-                    <button className="btn btn-primary" onClick={handleGoogleLogin}>
-                        Masuk dengan Google
+                    <button className="btn btn-primary" onClick={handleLoginClick}>
+                        Masuk Sekarang
                     </button>
                 </div>
             </nav>
@@ -104,11 +104,10 @@ const Landing = () => {
                         <div className="hero-actions">
                             <button
                                 className="btn btn-primary"
-                                style={{ padding: '14px 28px', fontSize: 15 }}
-                                onClick={handleGoogleLogin}
+                                style={{ padding: '14px 32px', fontSize: 16 }}
+                                onClick={handleLoginClick}
                             >
-                                <img src="https://www.google.com/favicon.ico" alt="G" style={{ width: 16, height: 16 }} />
-                                Mulai Gratis dengan Google
+                                Mulai Gratis Sekarang
                             </button>
                         </div>
 
@@ -231,9 +230,9 @@ const Landing = () => {
                 <button
                     className="btn"
                     style={{ background: 'white', color: 'var(--color-primary)', padding: '16px 40px', fontSize: 16, fontWeight: 700, borderRadius: 'var(--radius-full)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}
-                    onClick={handleGoogleLogin}
+                    onClick={handleLoginClick}
                 >
-                    Mulai Gratis Sekarang →
+                    Mulai Sekarang →
                 </button>
             </section>
 

@@ -5,6 +5,7 @@ import Layout from './components/layout/Layout';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import VerifyEmail from './pages/VerifyEmail';
 import Dashboard from './pages/Dashboard';
 import Jadwal from './pages/Jadwal';
 import Tugas from './pages/Tugas';
@@ -40,6 +41,7 @@ const AppRoutes = () => (
         <Route path="/" element={<PublicRoute><Landing /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+        <Route path="/verify-email" element={<PublicRoute><VerifyEmail /></PublicRoute>} />
 
         <Route element={
             <ProtectedRoute>

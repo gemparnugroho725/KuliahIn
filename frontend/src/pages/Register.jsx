@@ -29,32 +29,14 @@ const Register = () => {
         setLoading(true);
         try {
             await register(email, password, fullName);
-            setIsSent(true);
-            toast.success('Pendaftaran berhasil!');
+            toast.success('Pendaftaran berhasil! Silakan cek email kamu.');
+            navigate(`/verify-email?email=${encodeURIComponent(email)}`);
         } catch (error) {
             toast.error(error.message || 'Gagal mendaftar. Silakan coba lagi.');
         } finally {
             setLoading(false);
         }
     };
-
-    if (isSent) {
-        return (
-            <div className="auth-container">
-                <div className="auth-card" style={{ textAlign: 'center' }}>
-                    <div className="auth-icon-success">📧</div>
-                    <h2 className="auth-title">Cek Email Kamu!</h2>
-                    <p className="auth-subtitle">
-                        Kami telah mengirimkan link verifikasi ke <strong>{email}</strong>.
-                        Silakan klik link tersebut untuk mengaktifkan akun Kuliahin kamu.
-                    </p>
-                    <button className="btn btn-primary btn-full" onClick={() => navigate('/login')} style={{ marginTop: 24 }}>
-                        Lanjut ke Login
-                    </button>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="auth-container">
