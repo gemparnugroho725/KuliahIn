@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_BASE = '/api';
+// Pakai VITE_API_URL saat di Render/production, fallback ke /api saat local dev
+const API_BASE = import.meta.env.VITE_API_URL
+    ? `${import.meta.env.VITE_API_URL}/api`
+    : '/api';
 
 const api = axios.create({
     baseURL: API_BASE,
