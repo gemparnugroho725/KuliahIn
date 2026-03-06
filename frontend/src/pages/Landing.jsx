@@ -74,7 +74,7 @@ const Landing = () => {
                     zIndex: 9999,
                     position: 'relative'
                 }}>
-                    ⚠️ API Key Belum Terdeteksi: Tolong 'Trigger Deploy -> Clear Cache' di Netlify setelah isi Env Vars.
+                    ⚠️ API Key Belum Terdeteksi: Tolong 'Trigger Deploy -&gt; Clear Cache' di Netlify setelah isi Env Vars.
                 </div>
             )}
             {/* Navbar */}
