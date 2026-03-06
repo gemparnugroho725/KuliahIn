@@ -52,6 +52,32 @@ export const AuthProvider = ({ children }) => {
         };
     };
 
+    // Register manual (Email & Password)
+    const register = async (email, password, fullName) => {
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    full_name: fullName,
+                },
+                emailRedirectTo: `${window.location.origin}/dashboard`,
+            },
+        });
+        if (error) throw error;
+        return data;
+    };
+
+    // Login manual (Email & Password)
+    const login = async (email, password) => {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+        if (error) throw error;
+        return data;
+    };
+
     // Login dengan Google
     const loginWithGoogle = async () => {
         const { error } = await supabase.auth.signInWithOAuth({
@@ -74,7 +100,7 @@ export const AuthProvider = ({ children }) => {
     const updateUser = (updates) => setUser((prev) => ({ ...prev, ...updates }));
 
     return (
-        <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout, updateUser }}>
+        <AuthContext.Provider value={{ user, loading, register, login, loginWithGoogle, logout, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

@@ -52,12 +52,8 @@ const Landing = () => {
     const { loginWithGoogle } = useAuth();
     const isMissingEnv = !import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('placeholder');
 
-    const handleGoogleLogin = async () => {
-        try {
-            await loginWithGoogle();
-        } catch {
-            toast.error('Gagal login. Coba lagi.');
-        }
+    const handleGoogleLogin = () => {
+        navigate('/login');
     };
 
     return (

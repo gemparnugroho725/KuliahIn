@@ -3,6 +3,8 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/layout/Layout';
 import Landing from './pages/Landing';
+import Login from './pages/Login';
+import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Jadwal from './pages/Jadwal';
 import Tugas from './pages/Tugas';
@@ -36,6 +38,8 @@ const PublicRoute = ({ children }) => {
 const AppRoutes = () => (
     <Routes>
         <Route path="/" element={<PublicRoute><Landing /></PublicRoute>} />
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
 
         <Route element={
             <ProtectedRoute>
