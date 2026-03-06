@@ -8,11 +8,21 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Get initial session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session?.user) setUser(formatUser(session.user));
-            setLoading(false);
-        });
+        const initAuth = async () => {
+            try {
+                // Get initial session safely
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session?.user) {
+                    setUser(formatUser(session.user));
+                }
+            } catch (err) {
+                console.error('Auth initialization error:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        initAuth();
 
         // Listen for auth changes (login, logout, token refresh)
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
