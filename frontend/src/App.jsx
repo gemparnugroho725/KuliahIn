@@ -13,6 +13,11 @@ import Todo from './pages/Todo';
 import RuangBelajar from './pages/RuangBelajar';
 import Profil from './pages/Profil';
 
+// Admin Components
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminOverview from './pages/admin/AdminOverview';
+import AdminUsers from './pages/admin/AdminUsers';
+
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
@@ -32,7 +37,29 @@ const ProtectedRoute = ({ children }) => {
 const PublicRoute = ({ children }) => {
     const { user, loading } = useAuth();
     if (loading) return null;
-    if (user) return <Navigate to="/dashboard" replace />;
+    if (user) {
+        return <Navigate to="/dashboard" replace />;
+    }
+    return children;
+};
+
+// Wrapper Route (Khusus Admin)
+const AdminRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        return <div className="loading-screen">Memeriksa hak akses...</div>;
+    }
+
+    // Hanya perbolehkan role admin
+    if (!user || user.role !== 'admin') {
+        // Assuming toast is imported from 'react-hot-toast'
+        // If not, you'll need to import it: import toast from 'react-hot-toast';
+        // For now, I'll assume it's available or will be added.
+        // toast.error('Akses ditolak! Halaman khusus Admin.'); // Uncomment if toast is imported
+        return <Navigate to="/dashboard" replace />;
+    }
+    
     return children;
 };
 
@@ -54,6 +81,16 @@ const AppRoutes = () => (
             <Route path="/todo" element={<Todo />} />
             <Route path="/ruang-belajar" element={<RuangBelajar />} />
             <Route path="/profil" element={<Profil />} />
+        </Route>
+
+        {/* Admin Routes */}
+        <Route element={
+            <AdminRoute>
+                <AdminLayout />
+            </AdminRoute>
+        }>
+            <Route path="/admin" element={<AdminOverview />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

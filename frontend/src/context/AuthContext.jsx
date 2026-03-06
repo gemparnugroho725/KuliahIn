@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
                 // Get initial session safely
                 const { data: { session } } = await supabase.auth.getSession();
                 if (session?.user) {
-                    setUser(formatUser(session.user));
+                    await handleUserSession(session.user);
                 }
             } catch (err) {
                 console.error('Auth initialization error:', err);
@@ -25,9 +25,9 @@ export const AuthProvider = ({ children }) => {
         initAuth();
 
         // Listen for auth changes (login, logout, token refresh)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
             if (session?.user) {
-                setUser(formatUser(session.user));
+                await handleUserSession(session.user);
             } else {
                 setUser(null);
             }
@@ -36,7 +36,34 @@ export const AuthProvider = ({ children }) => {
         return () => subscription.unsubscribe();
     }, []);
 
-    const formatUser = (supabaseUser) => {
+    const handleUserSession = async (supabaseUser) => {
+        try {
+            // Fetch profile data
+            const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('role, status')
+                .eq('id', supabaseUser.id)
+                .single();
+
+            if (error && error.code !== 'PGRST116') {
+                console.error('Error fetching profile:', error);
+            }
+
+            // If banned, log them out immediately
+            if (profile?.status === 'banned') {
+                await supabase.auth.signOut();
+                setUser(null);
+                toast.error('Akun kamu telah diblokir oleh Admin.');
+                return;
+            }
+
+            setUser(formatUser(supabaseUser, profile));
+        } catch (error) {
+            console.error('Session handling error:', error);
+        }
+    };
+
+    const formatUser = (supabaseUser, profile) => {
         const meta = supabaseUser.user_metadata || {};
         const savedPrefs = JSON.parse(localStorage.getItem('kuliahin_prefs') || 'null');
         return {
@@ -44,6 +71,8 @@ export const AuthProvider = ({ children }) => {
             email: supabaseUser.email || 'demo@kuliahin.app',
             name: meta.full_name || meta.name || 'Mahasiswa',
             avatar: meta.avatar_url || meta.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${supabaseUser.id}`,
+            role: profile?.role || 'user',
+            status: profile?.status || 'active',
             preferences: savedPrefs || {
                 notifJadwal: true,
                 notifDeadline: true,
