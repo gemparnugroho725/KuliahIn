@@ -50,6 +50,7 @@ const features = [
 
 const Landing = () => {
     const { loginWithGoogle } = useAuth();
+    const isMissingEnv = !import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('placeholder');
 
     const handleGoogleLogin = async () => {
         try {
@@ -61,6 +62,21 @@ const Landing = () => {
 
     return (
         <div className="landing">
+            {isMissingEnv && import.meta.env.PROD && (
+                <div style={{
+                    background: '#FEF2F2',
+                    borderBottom: '1px solid #F87171',
+                    padding: '12px',
+                    textAlign: 'center',
+                    color: '#991B1B',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    zIndex: 9999,
+                    position: 'relative'
+                }}>
+                    ⚠️ API Key Belum Terdeteksi: Tolong 'Trigger Deploy -> Clear Cache' di Netlify setelah isi Env Vars.
+                </div>
+            )}
             {/* Navbar */}
             <nav className="landing-nav">
                 <div className="landing-nav-logo">
