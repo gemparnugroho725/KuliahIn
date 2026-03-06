@@ -1,18 +1,37 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Kuliahin - Platform manajemen perkuliahan untuk mahasiswa. Kelola jadwal, tugas, dan todo dengan lebih tertata." />
-    <meta name="theme-color" content="#2563EB" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    <title>Kuliahin – Manajemen Perkuliahan</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Kuliahin - Platform manajemen perkuliahan untuk mahasiswa. Kelola jadwal, tugas, dan todo dengan lebih tertata." />
+  <meta name="theme-color" content="#2563EB" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <title>Kuliahin – Manajemen Perkuliahan</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script>
+    window.onerror = function (msg, url, lineNo, columnNo, error) {
+      var root = document.getElementById('root');
+      if (root) {
+        root.innerHTML = '<div style="padding: 20px; color: #EF4444; background: #FEF2F2; border: 1px solid #F87171; border-radius: 8px; font-family: sans-serif;">' +
+          '<h2 style="margin-top: 0;">Terjadi Kesalahan Aplikasi</h2>' +
+          '<p><b>Pesan:</b> ' + msg + '</p>' +
+          '<p><b>Lokasi:</b> ' + url + ' (Line ' + lineNo + ')</p>' +
+          '<button onclick="location.reload()" style="padding: 8px 16px; background: #EF4444; color: white; border: none; border-radius: 5px; cursor: pointer;">Muat Ulang Halaman</button>' +
+          '</div>';
+      }
+      return false;
+    };
+  </script>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>
