@@ -1,6 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/layout/Layout';
 import Landing from './pages/Landing';
@@ -11,34 +10,14 @@ import Todo from './pages/Todo';
 import RuangBelajar from './pages/RuangBelajar';
 import Profil from './pages/Profil';
 
-// Handles /auth/callback?token=xxx from Google OAuth redirect
-const AuthCallback = () => {
-    const [params] = useSearchParams();
-    const { loginWithToken } = useAuth();
-
-    useEffect(() => {
-        const token = params.get('token');
-        if (token) {
-            loginWithToken(token, {});
-            window.location.href = '/dashboard';
-        }
-    }, []);
-
-    return (
-        <div className="page-loader">
-            <div className="spinner spinner-primary" style={{ width: 32, height: 32 }} />
-            <span style={{ color: 'var(--text-secondary)' }}>Memproses login...</span>
-        </div>
-    );
-};
-
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
     if (loading) {
         return (
             <div className="page-loader">
-                <div className="spinner spinner-primary" style={{ width: 32, height: 32 }} />
+                <div className="spinner spinner-primary" style={{ width: 36, height: 36 }} />
+                <span style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Memuat Kuliahin...</span>
             </div>
         );
     }
@@ -57,7 +36,6 @@ const PublicRoute = ({ children }) => {
 const AppRoutes = () => (
     <Routes>
         <Route path="/" element={<PublicRoute><Landing /></PublicRoute>} />
-        <Route path="/auth/callback" element={<AuthCallback />} />
 
         <Route element={
             <ProtectedRoute>

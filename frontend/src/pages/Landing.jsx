@@ -49,21 +49,14 @@ const features = [
 ];
 
 const Landing = () => {
-    const navigate = useNavigate();
-    const { loginDemo } = useAuth();
+    const { loginWithGoogle } = useAuth();
 
-    const handleDemoLogin = async () => {
+    const handleGoogleLogin = async () => {
         try {
-            await loginDemo();
-            toast.success('Selamat datang di Kuliahin! 🎉');
-            navigate('/dashboard');
+            await loginWithGoogle();
         } catch {
-            toast.error('Gagal login demo. Pastikan backend berjalan.');
+            toast.error('Gagal login. Coba lagi.');
         }
-    };
-
-    const handleGoogleLogin = () => {
-        window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/google`;
     };
 
     return (
@@ -75,9 +68,6 @@ const Landing = () => {
                     <span>Kuliah<span style={{ color: 'var(--color-primary)' }}>in</span></span>
                 </div>
                 <div style={{ display: 'flex', gap: 12 }}>
-                    <button className="btn btn-secondary" onClick={handleDemoLogin}>
-                        Coba Demo
-                    </button>
                     <button className="btn btn-primary" onClick={handleGoogleLogin}>
                         Masuk dengan Google
                     </button>
@@ -103,17 +93,10 @@ const Landing = () => {
                             <button
                                 className="btn btn-primary"
                                 style={{ padding: '14px 28px', fontSize: 15 }}
-                                onClick={handleDemoLogin}
-                            >
-                                Mulai Gratis <MdArrowForward />
-                            </button>
-                            <button
-                                className="btn btn-secondary"
-                                style={{ padding: '14px 28px', fontSize: 15 }}
                                 onClick={handleGoogleLogin}
                             >
                                 <img src="https://www.google.com/favicon.ico" alt="G" style={{ width: 16, height: 16 }} />
-                                Masuk dengan Google
+                                Mulai Gratis dengan Google
                             </button>
                         </div>
 
@@ -236,7 +219,7 @@ const Landing = () => {
                 <button
                     className="btn"
                     style={{ background: 'white', color: 'var(--color-primary)', padding: '16px 40px', fontSize: 16, fontWeight: 700, borderRadius: 'var(--radius-full)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}
-                    onClick={handleDemoLogin}
+                    onClick={handleGoogleLogin}
                 >
                     Mulai Gratis Sekarang →
                 </button>
