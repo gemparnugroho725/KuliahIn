@@ -1,21 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
-import { tugasAPI } from '../services/api';
+import { tugasAPI, jadwalAPI } from '../services/api';
 import { getDeadlineInfo, formatDate, STATUS_CONFIG, PRIORITAS_CONFIG } from '../utils/helpers';
 import toast from 'react-hot-toast';
 import { MdAdd, MdEdit, MdDelete, MdClose } from 'react-icons/md';
 
-const MATA_KULIAH_OPTIONS = ['Pemrograman Web', 'Basis Data', 'Kalkulus II', 'Jaringan Komputer', 'Rekayasa Perangkat Lunak', 'Lainnya'];
-
 const EMPTY_FORM = {
-    judul: '', deskripsi: '', mataKuliah: 'Pemrograman Web',
+    judul: '', deskripsi: '', mataKuliah: '',
     deadline: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
     status: 'belum', prioritas: 'sedang',
 };
 
-const TugasForm = ({ initial, onSave, onClose }) => {
+const TugasForm = ({ initial, mataKuliahList, onSave, onClose }) => {
+    const defaultMk = mataKuliahList && mataKuliahList.length > 0 ? mataKuliahList[0] : 'Lainnya';
     const [form, setForm] = useState(initial ? {
         ...initial, deadline: initial.deadline?.slice(0, 10)
-    } : EMPTY_FORM);
+    } : { ...EMPTY_FORM, mataKuliah: defaultMk });
     const [errors, setErrors] = useState({});
     const [saving, setSaving] = useState(false);
     const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
@@ -62,7 +61,10 @@ const TugasForm = ({ initial, onSave, onClose }) => {
                             <div className="form-group">
                                 <label className="form-label">Mata Kuliah *</label>
                                 <select className="form-select" value={form.mataKuliah} onChange={(e) => set('mataKuliah', e.target.value)}>
-                                    {MATA_KULIAH_OPTIONS.map((mk) => <option key={mk}>{mk}</option>)}
+                                    {mataKuliahList && mataKuliahList.length > 0 
+                                        ? mataKuliahList.map((mk) => <option key={mk} value={mk}>{mk}</option>)
+                                        : <option value="Lainnya">Lainnya</option>
+                                    }
                                 </select>
                             </div>
                             <div className="form-group">
@@ -106,6 +108,7 @@ const TugasForm = ({ initial, onSave, onClose }) => {
 
 const Tugas = () => {
     const [tugas, setTugas] = useState([]);
+    const [mataKuliahList, setMataKuliahList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filterStatus, setFilterStatus] = useState('');
     const [showForm, setShowForm] = useState(false);
@@ -113,9 +116,15 @@ const Tugas = () => {
 
     const load = useCallback(async () => {
         try {
-            const res = await tugasAPI.getAll(filterStatus ? { status: filterStatus } : {});
-            setTugas(res.data.data);
-        } catch { toast.error('Gagal memuat tugas'); }
+            const [resTugas, resJadwal] = await Promise.all([
+                tugasAPI.getAll(filterStatus ? { status: filterStatus } : {}),
+                jadwalAPI.getAll()
+            ]);
+            setTugas(resTugas.data.data);
+            
+            const uniqueMK = [...new Set(resJadwal.data.data.map(j => j.mataKuliah))];
+            setMataKuliahList(uniqueMK.length > 0 ? uniqueMK : ['Lainnya']);
+        } catch { toast.error('Gagal memuat data'); }
         setLoading(false);
     }, [filterStatus]);
 
@@ -236,7 +245,7 @@ const Tugas = () => {
                 </div>
             )}
 
-            {showForm && <TugasForm initial={editing} onSave={handleSave} onClose={() => { setShowForm(false); setEditing(null); }} />}
+            {showForm && <TugasForm initial={editing} mataKuliahList={mataKuliahList} onSave={handleSave} onClose={() => { setShowForm(false); setEditing(null); }} />}
         </div>
     );
 };

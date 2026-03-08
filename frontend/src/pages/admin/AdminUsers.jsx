@@ -16,7 +16,10 @@ const AdminUsers = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const { data, error } = await supabase
+            const { supabaseAdmin } = await import('../../services/supabase');
+            if(!supabaseAdmin) throw new Error("Supabase Admin Client not found");
+
+            const { data, error } = await supabaseAdmin
                 .from('profiles')
                 .select('*')
                 .order('createdAt', { ascending: false });
@@ -34,7 +37,8 @@ const AdminUsers = () => {
     const toggleUserStatus = async (userId, currentStatus) => {
         const newStatus = currentStatus === 'active' ? 'banned' : 'active';
         try {
-            const { error } = await supabase
+            const { supabaseAdmin } = await import('../../services/supabase');
+            const { error } = await supabaseAdmin
                 .from('profiles')
                 .update({ status: newStatus })
                 .eq('id', userId);
@@ -61,7 +65,8 @@ const AdminUsers = () => {
         if(!window.confirm(`Apakah kamu yakin ingin mengubah peran user ini menjadi ${newRole.toUpperCase()}?`)) return;
 
         try {
-            const { error } = await supabase
+            const { supabaseAdmin } = await import('../../services/supabase');
+            const { error } = await supabaseAdmin
                 .from('profiles')
                 .update({ role: newRole })
                 .eq('id', userId);
@@ -79,11 +84,8 @@ const AdminUsers = () => {
     if (loading) return <div>Memuat daftar user...</div>;
 
     return (
-        <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Kelola User</h1>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>Pantau dan kelola akses pengguna aplikasi.</p>
-
-            <div style={{ background: 'white', borderRadius: 12, boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                         <tr>

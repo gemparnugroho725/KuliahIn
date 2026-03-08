@@ -12,8 +12,12 @@ const AdminOverview = () => {
 
     const fetchStats = async () => {
         try {
+            // We must use supabaseAdmin to bypass RLS to count all profiles
+            const { supabaseAdmin } = await import('../../services/supabase');
+            if(!supabaseAdmin) throw new Error("Supabase Admin Client not found");
+
             const [usersReq, tugasReq, jadwalReq] = await Promise.all([
-                supabase.from('profiles').select('id', { count: 'exact', head: true }),
+                supabaseAdmin.from('profiles').select('id', { count: 'exact', head: true }),
                 supabase.from('tugas').select('id', { count: 'exact', head: true }),
                 supabase.from('jadwal').select('id', { count: 'exact', head: true })
             ]);
@@ -33,44 +37,35 @@ const AdminOverview = () => {
     if (loading) return <div>Memuat data statistik...</div>;
 
     return (
-        <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Overview Sistem</h1>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: 32 }}>Pantau statistik penggunaan aplikasi Kuliahin.</p>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 24 }}>
-                <div style={{ background: 'white', padding: 24, borderRadius: 12, boxShadow: 'var(--shadow-sm)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                        <div style={{ background: '#E0F2FE', color: '#0284C7', padding: 16, borderRadius: '50%' }}>
-                            <MdPeople size={24} />
-                        </div>
-                        <div>
-                            <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Total User Terdaftar</div>
-                            <div style={{ fontSize: 28, fontWeight: 800 }}>{stats.users}</div>
-                        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+                <div className="stat-card card-hover">
+                    <div className="stat-icon" style={{ background: '#E0F2FE', color: '#0284C7' }}>
+                        <MdPeople />
+                    </div>
+                    <div className="stat-content">
+                        <div className="stat-value" style={{ color: '#0284C7' }}>{stats.users}</div>
+                        <div className="stat-label">Total User Terdaftar</div>
                     </div>
                 </div>
 
-                <div style={{ background: 'white', padding: 24, borderRadius: 12, boxShadow: 'var(--shadow-sm)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                        <div style={{ background: '#FEE2E2', color: '#DC2626', padding: 16, borderRadius: '50%' }}>
-                            <MdMenuBook size={24} />
-                        </div>
-                        <div>
-                            <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Total Tugas Dibuat</div>
-                            <div style={{ fontSize: 28, fontWeight: 800 }}>{stats.tugas}</div>
-                        </div>
+                <div className="stat-card card-hover">
+                    <div className="stat-icon" style={{ background: '#FEE2E2', color: '#DC2626' }}>
+                        <MdMenuBook />
+                    </div>
+                    <div className="stat-content">
+                        <div className="stat-value" style={{ color: '#DC2626' }}>{stats.tugas}</div>
+                        <div className="stat-label">Total Tugas Dibuat</div>
                     </div>
                 </div>
 
-                <div style={{ background: 'white', padding: 24, borderRadius: 12, boxShadow: 'var(--shadow-sm)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                        <div style={{ background: '#FEF3C7', color: '#D97706', padding: 16, borderRadius: '50%' }}>
-                            <MdChecklist size={24} />
-                        </div>
-                        <div>
-                            <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Total Jadwal Kuliah</div>
-                            <div style={{ fontSize: 28, fontWeight: 800 }}>{stats.jadwal}</div>
-                        </div>
+                <div className="stat-card card-hover">
+                    <div className="stat-icon" style={{ background: '#FEF3C7', color: '#D97706' }}>
+                        <MdChecklist />
+                    </div>
+                    <div className="stat-content">
+                        <div className="stat-value" style={{ color: '#D97706' }}>{stats.jadwal}</div>
+                        <div className="stat-label">Total Jadwal Kuliah</div>
                     </div>
                 </div>
             </div>

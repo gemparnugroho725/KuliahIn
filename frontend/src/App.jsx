@@ -17,6 +17,7 @@ import Profil from './pages/Profil';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminOverview from './pages/admin/AdminOverview';
 import AdminUsers from './pages/admin/AdminUsers';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -91,6 +92,7 @@ const AppRoutes = () => (
         }>
             <Route path="/admin" element={<AdminOverview />} />
             <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
