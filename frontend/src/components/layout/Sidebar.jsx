@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { MdDashboard, MdCalendarToday, MdAssignment, MdChecklist, MdMenuBook, MdPerson, MdLogout } from 'react-icons/md';
+import { MdDashboard, MdCalendarToday, MdAssignment, MdChecklist, MdMenuBook, MdPerson, MdLogout, MdAdminPanelSettings } from 'react-icons/md';
 import toast from 'react-hot-toast';
 
 const navItems = [
@@ -64,6 +64,20 @@ const Sidebar = () => {
                     <span className="sidebar-link-icon"><MdPerson /></span>
                     Profil & Pengaturan
                 </NavLink>
+
+                {user?.role === 'admin' && (
+                    <div style={{ marginTop: 'auto', paddingTop: '20px' }}>
+                        <div className="sidebar-section-label" style={{ color: '#FCD34D' }}>Khusus Admin</div>
+                        <NavLink
+                            to="/admin"
+                            className="sidebar-link"
+                            style={{ background: '#FEF3C7', color: '#D97706', fontWeight: 600, marginTop: 8 }}
+                        >
+                            <span className="sidebar-link-icon" style={{ color: '#D97706' }}><MdAdminPanelSettings /></span>
+                            Dashboard Admin →
+                        </NavLink>
+                    </div>
+                )}
             </nav>
 
             <div className="sidebar-footer">

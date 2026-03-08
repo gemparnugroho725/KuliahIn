@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase';
-import { MdBlock, MdCheckCircle } from 'react-icons/md';
+import { MdBlock, MdCheckCircle, MdSecurity, MdPersonOutline } from 'react-icons/md';
+import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 
 const AdminUsers = () => {
+    const { user: currentUser } = useAuth();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -44,6 +46,33 @@ const AdminUsers = () => {
         } catch (error) {
             console.error('Error updating status:', error);
             toast.error('Gagal mengubah status user.');
+        }
+    };
+
+    const toggleUserRole = async (userId, currentRole) => {
+        const newRole = currentRole === 'admin' ? 'user' : 'admin';
+        
+        // Cek jika admin mencoba ubah rolenya sendiri menjadi user
+        if (userId === currentUser.id && newRole === 'user') {
+            toast.error('Kamu tidak bisa menghapus akses admin kamu sendiri dari halaman ini.');
+            return;
+        }
+
+        if(!window.confirm(`Apakah kamu yakin ingin mengubah peran user ini menjadi ${newRole.toUpperCase()}?`)) return;
+
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ role: newRole })
+                .eq('id', userId);
+
+            if (error) throw error;
+            
+            toast.success(`Berhasil! User sekarang adalah ${newRole.toUpperCase()}`);
+            fetchUsers();
+        } catch (error) {
+            console.error('Error updating role:', error);
+            toast.error('Gagal mengubah peran user.');
         }
     };
 
@@ -94,24 +123,51 @@ const AdminUsers = () => {
                                         {u.status === 'active' ? 'Aktif' : 'Diblokir'}
                                     </span>
                                 </td>
-                                <td style={{ padding: '16px 24px' }}>
-                                    {u.role !== 'admin' && (
-                                        <button 
-                                            onClick={() => toggleUserStatus(u.id, u.status)}
-                                            style={{
-                                                background: 'none',
-                                                border: 'none',
-                                                color: u.status === 'active' ? '#EF4444' : '#10B981',
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 6,
-                                                fontSize: 13,
-                                                fontWeight: 600
-                                            }}
-                                        >
-                                            {u.status === 'active' ? <><MdBlock size={18} /> Blokir Akun</> : <><MdCheckCircle size={18} /> Aktifkan</>}
-                                        </button>
+                                <td style={{ padding: '16px 24px', display: 'flex', gap: 12 }}>
+                                    {u.id !== currentUser.id && (
+                                        <>
+                                            <button 
+                                                onClick={() => toggleUserRole(u.id, u.role)}
+                                                style={{
+                                                    background: 'none',
+                                                    border: 'none',
+                                                    color: u.role === 'admin' ? '#D97706' : '#7C3AED',
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 6,
+                                                    fontSize: 13,
+                                                    fontWeight: 600,
+                                                    padding: '4px 8px',
+                                                    borderRadius: 6,
+                                                }}
+                                                className="hover-bg-gray"
+                                            >
+                                                {u.role === 'admin' ? <><MdPersonOutline size={18} /> Jadikan User</> : <><MdSecurity size={18} /> Jadikan Admin</>}
+                                            </button>
+
+                                            {u.role !== 'admin' && (
+                                                <button 
+                                                    onClick={() => toggleUserStatus(u.id, u.status)}
+                                                    style={{
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        color: u.status === 'active' ? '#EF4444' : '#10B981',
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: 6,
+                                                        fontSize: 13,
+                                                        fontWeight: 600,
+                                                        padding: '4px 8px',
+                                                        borderRadius: 6,
+                                                    }}
+                                                    className="hover-bg-gray"
+                                                >
+                                                    {u.status === 'active' ? <><MdBlock size={18} /> Blokir Akun</> : <><MdCheckCircle size={18} /> Aktifkan</>}
+                                                </button>
+                                            )}
+                                        </>
                                     )}
                                 </td>
                             </tr>

@@ -36,7 +36,7 @@ const ProtectedRoute = ({ children }) => {
 // Public route (redirect if logged in)
 const PublicRoute = ({ children }) => {
     const { user, loading } = useAuth();
-    if (loading) return null;
+    if (loading) return <div style={{ padding: 20 }}>Loading Public Route... (Menunggu Supabase)</div>;
     if (user) {
         return <Navigate to="/dashboard" replace />;
     }
