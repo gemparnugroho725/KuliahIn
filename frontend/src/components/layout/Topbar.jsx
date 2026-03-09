@@ -1,7 +1,11 @@
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { MdAdd, MdNotifications } from 'react-icons/md';
 import { getGreeting } from '../../utils/helpers';
+import { useNotifications } from '../../context/NotificationContext';
+import { formatDistanceToNow } from 'date-fns';
+import { id as idLocale } from 'date-fns/locale';
 
 const PAGE_TITLES = {
     '/dashboard': { title: 'Dashboard', subtitle: () => `${getGreeting()}! Siap produktif hari ini?` },
@@ -15,6 +19,9 @@ const PAGE_TITLES = {
 const Topbar = ({ onAddClick }) => {
     const location = useLocation();
     const { user } = useAuth();
+    const { notifications, unreadCount, markAsRead, clearAll } = useNotifications();
+    const [showNotif, setShowNotif] = useState(false);
+    
     const pageInfo = PAGE_TITLES[location.pathname] || { title: 'Kuliahin', subtitle: () => '' };
 
     return (
@@ -29,9 +36,46 @@ const Topbar = ({ onAddClick }) => {
                         <MdAdd style={{ fontSize: '18px' }} /> Tambah
                     </button>
                 )}
-                <button className="topbar-btn" title="Notifikasi">
-                    <MdNotifications />
-                </button>
+                <div style={{ position: 'relative' }}>
+                    <button 
+                        className="topbar-btn" 
+                        title="Notifikasi"
+                        onClick={() => setShowNotif(!showNotif)}
+                    >
+                        <MdNotifications />
+                        {unreadCount > 0 && (
+                            <span className="notif-badge">{unreadCount}</span>
+                        )}
+                    </button>
+
+                    {showNotif && (
+                        <div className="notif-dropdown">
+                            <div className="notif-header">
+                                <span>Notifikasi</span>
+                                <button onClick={clearAll} className="notif-clear-btn">Hapus Semua</button>
+                            </div>
+                            <div className="notif-list">
+                                {notifications.length === 0 ? (
+                                    <div className="notif-empty">Tidak ada notifikasi</div>
+                                ) : (
+                                    notifications.map(n => (
+                                        <div 
+                                            key={n.id} 
+                                            className={`notif-item ${!n.read ? 'unread' : ''}`}
+                                            onClick={() => markAsRead(n.id)}
+                                        >
+                                            <div className="notif-item-title">{n.title}</div>
+                                            <div className="notif-item-msg">{n.message}</div>
+                                            <div className="notif-item-time">
+                                                {formatDistanceToNow(new Date(n.time), { addSuffix: true, locale: idLocale })}
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
                 <img
                     src={user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name}`}
                     alt="avatar"

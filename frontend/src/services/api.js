@@ -25,6 +25,12 @@ export const jadwalAPI = {
             .select()
             .single();
         if (error) throw error;
+
+        // Trigger immediate check
+        import('./NotificationEngine').then(({ notificationEngine }) => {
+            notificationEngine.check();
+        });
+
         return wrap(data);
     },
     update: async (id, form) => {
@@ -65,6 +71,12 @@ export const tugasAPI = {
             .select()
             .single();
         if (error) throw error;
+        
+        // Trigger immediate check in case the new task is already within threshold
+        import('./NotificationEngine').then(({ notificationEngine }) => {
+            notificationEngine.check();
+        });
+
         return wrap(data);
     },
     update: async (id, form) => {

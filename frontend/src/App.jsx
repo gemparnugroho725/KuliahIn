@@ -1,6 +1,9 @@
+import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { NotificationProvider, useNotifications } from './context/NotificationContext';
+import { notificationEngine } from './services/NotificationEngine';
 import Layout from './components/layout/Layout';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
@@ -19,9 +22,20 @@ import AdminOverview from './pages/admin/AdminOverview';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
-// Protected route wrapper
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
+    const { addNotification } = useNotifications();
+    
+    // Start notification engine when user is logged in
+    React.useEffect(() => {
+        if (user) {
+            notificationEngine.start(addNotification);
+        } else {
+            notificationEngine.stop();
+        }
+        return () => notificationEngine.stop();
+    }, [user, addNotification]);
+
     if (loading) {
         return (
             <div className="page-loader">
@@ -102,22 +116,24 @@ const AppRoutes = () => (
 function App() {
     return (
         <AuthProvider>
-            <BrowserRouter>
-                <AppRoutes />
-                <Toaster
-                    position="top-right"
-                    toastOptions={{
-                        duration: 3000,
-                        style: {
-                            borderRadius: '10px',
-                            fontFamily: 'Inter, sans-serif',
-                            fontSize: '14px',
-                            fontWeight: 500,
-                            boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
-                        },
-                    }}
-                />
-            </BrowserRouter>
+            <NotificationProvider>
+                <BrowserRouter>
+                    <AppRoutes />
+                    <Toaster
+                        position="top-right"
+                        toastOptions={{
+                            duration: 3000,
+                            style: {
+                                borderRadius: '10px',
+                                fontFamily: 'Inter, sans-serif',
+                                fontSize: '14px',
+                                fontWeight: 500,
+                                boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+                            },
+                        }}
+                    />
+                </BrowserRouter>
+            </NotificationProvider>
         </AuthProvider>
     );
 }

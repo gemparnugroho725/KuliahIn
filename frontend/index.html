@@ -17,20 +17,6 @@
 
 <body>
   <div id="root"></div>
-  <script>
-    window.onerror = function (msg, url, lineNo, columnNo, error) {
-      var root = document.getElementById('root');
-      if (root) {
-        root.innerHTML = '<div style="padding: 20px; color: #EF4444; background: #FEF2F2; border: 1px solid #F87171; border-radius: 8px; font-family: sans-serif;">' +
-          '<h2 style="margin-top: 0;">Terjadi Kesalahan Aplikasi</h2>' +
-          '<p><b>Pesan:</b> ' + msg + '</p>' +
-          '<p><b>Lokasi:</b> ' + url + ' (Line ' + lineNo + ')</p>' +
-          '<button onclick="location.reload()" style="padding: 8px 16px; background: #EF4444; color: white; border: none; border-radius: 5px; cursor: pointer;">Muat Ulang Halaman</button>' +
-          '</div>';
-      }
-      return false;
-    };
-  </script>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 

@@ -114,29 +114,100 @@ const Profil = () => {
                             <MdNotifications style={{ color: 'var(--color-warning)' }} /> Preferensi Notifikasi
                         </h3>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                            {[
-                                { key: 'notifJadwal', label: 'Notifikasi Jadwal', desc: 'Pengingat 15 menit sebelum kelas dimulai' },
-                                { key: 'notifDeadline', label: 'Notifikasi Deadline', desc: 'Pengingat tugas yang akan jatuh tempo hari ini' },
-                                { key: 'notifBrowser', label: 'Notifikasi Browser', desc: 'Notifikasi native dari browser (perlu izin)' },
-                            ].map((item) => (
-                                <div key={item.key} style={{
-                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                    padding: '14px 16px', background: 'var(--bg-base)', borderRadius: 'var(--radius-md)',
-                                }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                            {/* Jadwal Notification */}
+                            <div style={{ padding: '14px 16px', background: 'var(--bg-base)', borderRadius: 'var(--radius-md)' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                                     <div>
-                                        <div style={{ fontSize: 14, fontWeight: 600 }}>{item.label}</div>
-                                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{item.desc}</div>
+                                        <div style={{ fontSize: 14, fontWeight: 600 }}>Notifikasi Jadwal</div>
+                                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>Pengingat sebelum kelas dimulai</div>
                                     </div>
                                     <label className="toggle">
-                                        <input type="checkbox" checked={prefs[item.key]} onChange={() => togglePref(item.key)} />
+                                        <input type="checkbox" checked={prefs.notifJadwal} onChange={() => togglePref('notifJadwal')} />
                                         <span className="toggle-slider" />
                                     </label>
                                 </div>
-                            ))}
+                                {prefs.notifJadwal && (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
+                                        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Ingatkan saya</span>
+                                        <input 
+                                            type="number"
+                                            className="input-field"
+                                            style={{ padding: '6px 10px', fontSize: 13, width: '60px' }}
+                                            value={prefs.jadwalReminderValue || 15}
+                                            onChange={(e) => setPrefs(p => ({ ...p, jadwalReminderValue: parseInt(e.target.value) || 0 }))}
+                                            min="1"
+                                        />
+                                        <select 
+                                            className="input-field" 
+                                            style={{ padding: '6px 12px', fontSize: 13, width: 'auto' }}
+                                            value={prefs.jadwalReminderUnit || 'minutes'}
+                                            onChange={(e) => setPrefs(p => ({ ...p, jadwalReminderUnit: e.target.value }))}
+                                        >
+                                            <option value="minutes">Menit</option>
+                                            <option value="hours">Jam</option>
+                                        </select>
+                                        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>sebelumnya</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Deadline Notification */}
+                            <div style={{ padding: '14px 16px', background: 'var(--bg-base)', borderRadius: 'var(--radius-md)' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                                    <div>
+                                        <div style={{ fontSize: 14, fontWeight: 600 }}>Notifikasi Deadline</div>
+                                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>Pengingat sebelum tugas jatuh tempo</div>
+                                    </div>
+                                    <label className="toggle">
+                                        <input type="checkbox" checked={prefs.notifDeadline} onChange={() => togglePref('notifDeadline')} />
+                                        <span className="toggle-slider" />
+                                    </label>
+                                </div>
+                                {prefs.notifDeadline && (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
+                                        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Ingatkan saya</span>
+                                        <input 
+                                            type="number"
+                                            className="input-field"
+                                            style={{ padding: '6px 10px', fontSize: 13, width: '60px' }}
+                                            value={prefs.tugasReminderValue || 1}
+                                            onChange={(e) => setPrefs(p => ({ ...p, tugasReminderValue: parseInt(e.target.value) || 0 }))}
+                                            min="1"
+                                        />
+                                        <select 
+                                            className="input-field" 
+                                            style={{ padding: '6px 12px', fontSize: 13, width: 'auto' }}
+                                            value={prefs.tugasReminderUnit || 'days'}
+                                            onChange={(e) => setPrefs(p => ({ ...p, tugasReminderUnit: e.target.value }))}
+                                        >
+                                            <option value="minutes">Menit</option>
+                                            <option value="hours">Jam</option>
+                                            <option value="days">Hari</option>
+                                        </select>
+                                        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>sebelumnya</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Browser Notification */}
+                            <div style={{ padding: '14px 16px', background: 'var(--bg-base)', borderRadius: 'var(--radius-md)' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <div>
+                                        <div style={{ fontSize: 14, fontWeight: 600 }}>Izin Notifikasi Browser</div>
+                                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>Wajib aktif agar pengingat muncul</div>
+                                    </div>
+                                    <label className="toggle">
+                                        <input type="checkbox" checked={prefs.notifBrowser} disabled={prefs.notifBrowser} onChange={handleRequestNotif} />
+                                        <span className="toggle-slider" />
+                                    </label>
+                                </div>
+                            </div>
+
+
                         </div>
 
-                        <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+                        <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
                             <button className="btn btn-primary" style={{ flex: 1 }} onClick={handleSavePrefs} disabled={saving}>
                                 {saving ? <span className="spinner" /> : null} Simpan Preferensi
                             </button>
